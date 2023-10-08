@@ -1,30 +1,49 @@
 import React from "react";
 import Modal from "./Modal";
 import { Field, Form, Formik } from "formik";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 
-const AddAndUpdateContact = ({ onClose, onOpen }) => {
+const AddAndUpdateContact = ({ onClose, onOpen, isUpdate, contact }) => {
+  // add funtionality
   const addContact = async (contact) => {
-   try {
-    const contactRef=collection(db,"contact")
-    await addDoc(contactRef,contact)
-   } catch (error) {
-    console.log(error)
-   }
+    try {
+      const contactRef = collection(db, "contact");
+      await addDoc(contactRef, contact);
+      onClose()
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateContact = async (contact, id) => {
+    try {
+      const contactRef = doc(db, "contact", id);
+      await updateDoc(contactRef, contact);
+      onClose()
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div>
       <Modal onClose={onClose} onOpen={onOpen}>
         <Formik
-          initialValues={{
-            name: "",
-            email: "",
-          }}
+          initialValues={
+            isUpdate
+              ? {
+                  name: contact.name,
+                  email: contact.email,
+                }
+              : {
+                  name: "",
+                  email: "",
+                }
+          }
           onSubmit={(value) => {
             console.log(value);
-            addContact(value)
+            isUpdate ? updateContact(value, contact.id) : addContact(value);
           }}
         >
           <Form className="flex flex-col gap-4">
@@ -37,7 +56,7 @@ const AddAndUpdateContact = ({ onClose, onOpen }) => {
               <Field type="email" name="email" className="h-10 border" />
             </div>
             <button className="self-end border bg-green-950 px-3 py-1.5 text-white">
-              Add Button
+              {isUpdate ? "Update" : "Add"} Button
             </button>
           </Form>
         </Formik>
