@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "./config/firebase";
 import ContactCard from "./components/ContactCard";
-import Modal from "./components/Modal";
 import AddAndUpdateContact from "./components/AddAndUpdateContact";
 import useDisclouse from "./hooks/useDisclouse";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const App = () => {
   const [contacts, setcontacts] = useState([]);
@@ -60,6 +62,9 @@ const App = () => {
         </div>
       </div>
       <AddAndUpdateContact onClose={onClose} onOpen={open} />
+      <ToastContainer
+      position="bottom-center"
+      />
     </>
   );
 };
