@@ -9,6 +9,7 @@ import AddAndUpdateContact from "./components/AddAndUpdateContact";
 import useDisclouse from "./hooks/useDisclouse";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NotFoundContact from "./components/NotFoundContact";
 
 const App = () => {
   const [contacts, setcontacts] = useState([]);
@@ -78,7 +79,7 @@ const filter = contactList.filter((contact)=>contact.name.toLowerCase().includes
         </div>
 
         <div className="mt-4 flex flex-col gap-3">
-          {contacts.map((contact) => (
+          {contacts.length <= 0 ? <NotFoundContact/> : contacts.map((contact) => (
             <ContactCard contact={contact} key={contact.id} />
           ))}
         </div>
