@@ -7,9 +7,8 @@ import { db } from "./config/firebase";
 import ContactCard from "./components/ContactCard";
 import AddAndUpdateContact from "./components/AddAndUpdateContact";
 import useDisclouse from "./hooks/useDisclouse";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [contacts, setcontacts] = useState([]);
@@ -38,6 +37,28 @@ const App = () => {
     getContacts();
   }, []);
 
+  // search funtionality
+  const filterContact = (e) => {
+    const value = e.target.value;
+
+    const contactRef = collection(db, "contact");
+
+    onSnapshot(contactRef, (snapshot) => {
+      const contactList = snapshot.docs.map((docs) => {
+        return {
+          id: docs.id,
+          ...docs.data(),
+        };
+      });
+
+const filter = contactList.filter((contact)=>contact.name.toLowerCase().includes(value.toLowerCase()))
+
+
+      setcontacts(filter);
+      return filter;
+    });
+  };
+
   return (
     <>
       <div className="mx-auto max-w-[370px] px-4">
@@ -45,6 +66,7 @@ const App = () => {
         <div className="relative flex items-center ">
           <FiSearch className="absolute ml-1 text-2xl text-white " />
           <input
+            onChange={filterContact}
             type="text"
             name="search"
             className="h-10 flex-grow rounded-md border border-white bg-transparent  pl-9 text-lg font-medium text-white"
@@ -62,9 +84,7 @@ const App = () => {
         </div>
       </div>
       <AddAndUpdateContact onClose={onClose} onOpen={open} />
-      <ToastContainer
-      position="bottom-center"
-      />
+      <ToastContainer position="bottom-center" />
     </>
   );
 };
